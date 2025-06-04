@@ -9,7 +9,7 @@ import model.Vehicle;
  * Utility class for calculating the cost of a trip based on the vehicle's fuel consumption and maintenance costs.
  * @Author [Miguel Armas, Soledad Buri, Jaime Landazuri, Cael Soto]
  */
-public class CostCalculator {
+public class CostCalculator implements Constants {
 
     public static double calculateTripCost(Vehicle vehicle, Trip trip) {
         double cost = (trip.getDistanceTravelled() * vehicle.getFuelConsumption()

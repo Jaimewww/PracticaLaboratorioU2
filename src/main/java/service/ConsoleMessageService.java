@@ -5,7 +5,7 @@ package service;
  * ConsoleService is a simple implementation of the MessageService interface
  * @Author [Miguel Armas, Soledad Buri, Jaime Landazuri, Cael Soto]
  */
-public class ConsoleService implements MessageService {
+public class ConsoleMessageService implements MessageService {
     @Override
     public void sendMessage(String message) throws IllegalArgumentException {
         if (message == null || message.isEmpty()) {

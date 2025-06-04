@@ -30,11 +30,11 @@ public class TripFacade {
      * @return
      * @throws EntityNotFoundException
      */
-    public List<Trip> findAll(Vehicle vehicle) throws EntityNotFoundException {
+    /*public List<Trip> findAll(Vehicle vehicle) throws EntityNotFoundException {
         try{
             return tripRepository.find(vehicle);
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(e.getMessage());
         }
-    }
+    }*/
 }

@@ -25,7 +25,7 @@ public class TripRepository {
         return trip;
     }
 
-    public Trip find(Long id) throws IllegalArgumentException {
+    /*public Trip find(Long id) throws IllegalArgumentException {
         Trip trip = trips.get(id);
         if (trip == null) {
             throw new IllegalArgumentException("Trip not found with ID: " + id);
@@ -40,7 +40,7 @@ public class TripRepository {
             }
         }
         throw new EntityNotFoundException("Trip not found with plate: " + plate);
-    }
+    }*/
 
     /**
      *
@@ -49,7 +49,7 @@ public class TripRepository {
      * @return
      * @throws EntityNotFoundException
      */
-    public List<Trip> find(Vehicle vehicle) throws EntityNotFoundException {
+    /*public List<Trip> find(Vehicle vehicle) throws EntityNotFoundException {
         if(trips.isEmpty()){
             throw new EntityNotFoundException("No trips found");
         }
@@ -63,5 +63,5 @@ public class TripRepository {
             return tripList;
         }
         throw new EntityNotFoundException("Trips not found for this plate: " + vehicle.getPlate());
-    }
+    }*/
 }

@@ -31,19 +31,19 @@ public class VehicleFacade {
      */
     public Vehicle update(String plate, LocalDate localDate) throws EntityNotFoundException {
         try {
-            return repo.update(plate,localDate);
+            return repo.update(plate, localDate);
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException("Vehicle with plate " + plate + " not found.");
         }
     }
 
-    public Vehicle find(long id) throws EntityNotFoundException {
+    /*public Vehicle find(long id) throws EntityNotFoundException {
         try {
             return repo.find(id);
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(e.getMessage());
         }
-    }
+    }*/
 
     public Vehicle find(String plate) throws EntityNotFoundException {
             return repo.find(plate);

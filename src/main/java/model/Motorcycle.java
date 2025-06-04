@@ -10,13 +10,6 @@ import util.Validator;
 public class Motorcycle extends Vehicle implements HasEngineDisplacement{
     private double engineDisplacement;
 
-    private static int motorcycleCount = 0;
-    private static double fuelConsumption = 0.0;
-    private static double maintenanceCost = 0.0;
-
-    public Motorcycle() {
-    }
-
     @Override
     public double getEngineDisplacement() {
         return this.engineDisplacement;
@@ -29,44 +22,8 @@ public class Motorcycle extends Vehicle implements HasEngineDisplacement{
     }
 
     @Override
-    public double getFuelConsumption() {
-        return fuelConsumption;
-    }
-
-    @Override
-    public double getMaintenanceCost() {
-        return maintenanceCost;
-    }
-
-    @Override
     public VehicleType getType() {
         return VehicleType.MOTORCYCLE;
-    }
-
-    public void setFuelConsumption(double fuelConsumption) throws IllegalArgumentException {
-        Motorcycle.fuelConsumption = fuelConsumption;
-    }
-
-    public void setMaintenanceCost(double maintenanceCost) throws IllegalArgumentException {
-        Motorcycle.maintenanceCost = maintenanceCost;
-    }
-
-    public static int getMotorcycleCount() {
-        return motorcycleCount;
-    }
-
-    @Override
-    public void enterDetails(InputService inputService) {
-        double engineDisplacement = inputService.getDouble("Enter engine displacement for the Motorcycle (cm^3):");
-        setEngineDisplacement(engineDisplacement);
-
-        if (Motorcycle.getMotorcycleCount() == 0) {
-            double fuelConsumption = inputService.getDouble("Enter fuel consumption for the Motorcycle (L/100Km):");
-            double maintenanceCost = inputService.getDouble("Enter maintenance cost for the Motorcycle:");
-            setFuelConsumption(fuelConsumption);
-            setMaintenanceCost(maintenanceCost);
-        }
-        motorcycleCount++;
     }
 
     @Override

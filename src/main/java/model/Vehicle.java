@@ -1,6 +1,5 @@
 package model;
 
-import service.InputService;
 import util.Validator;
 import java.time.LocalDate;
 
@@ -12,39 +11,35 @@ public abstract class Vehicle {
     protected String carPlate;
     protected double carryingCapacity;
     protected LocalDate lastMaintenance;
+    protected double fuelConsumption;
+    protected double maintenanceCost;
 
 
     public Vehicle() {
         this.carPlate = "";
         this.carryingCapacity = 0.0;
+        this.fuelConsumption = 0.0;
+        this.maintenanceCost = 0.0;
         this.lastMaintenance = LocalDate.now();
     }
 
-    public Vehicle(String carPlate, double carryingCapacity, LocalDate lastMaintenance) throws IllegalArgumentException {
-        if(carPlate == null || carPlate.isEmpty()) {
-            throw new IllegalArgumentException("Car plate cannot be null or empty.");
-        }
-        this.carPlate = carPlate;
-        if(carryingCapacity < 0) {
-            throw new IllegalArgumentException("Carrying capacity cannot be negative.");
-        }
-        this.carryingCapacity = carryingCapacity;
-        if(lastMaintenance == null) {
-            throw new IllegalArgumentException("Last maintenance date cannot be null.");
-        }
-        this.lastMaintenance = lastMaintenance;
-    }
-
     //Fuel consumption and maintenance cost are abstract methods to be implemented by subclasses.
-    public abstract double getFuelConsumption();
-    public abstract double getMaintenanceCost();
+    public double getFuelConsumption() {
+        return fuelConsumption;
+    }
+    
+    public double getMaintenanceCost() {
+        return maintenanceCost;
+    }
 
     public void setFuelConsumption(double fuelConsumption) throws IllegalArgumentException{
         Validator.validateNegatives(fuelConsumption);
+        this.fuelConsumption = fuelConsumption;
     }
 
     public void setMaintenanceCost(double maintenanceCost) throws IllegalArgumentException{
        Validator.validateNegatives(maintenanceCost);
+       this.maintenanceCost = maintenanceCost;
     }
 
 
@@ -76,7 +71,4 @@ public abstract class Vehicle {
     }
 
     public abstract VehicleType getType();
-
-    public abstract void enterDetails(InputService inputService);
-
 }
