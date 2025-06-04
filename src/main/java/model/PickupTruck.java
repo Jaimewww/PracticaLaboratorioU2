@@ -1,7 +1,5 @@
 package model;
 
-import service.InputService;
-
 /**
  * Represents a Pickup Truck vehicle.
  * @Author [Miguel Armas, Soledad Buri, Jaime Landazuri, Cael Soto]
@@ -9,14 +7,9 @@ import service.InputService;
 public class PickupTruck extends Vehicle implements HasTractionType {
     boolean fourWheelTraction;
 
-    private static int pickUpTruckCount = 0;
-    private static double fuelConsumption = 0.0;
-    private static double maintenanceCost = 0.0;
-
     public PickupTruck() {
     }
-
-
+    
     @Override
     public boolean hasFourWheelTraction() {
         return fourWheelTraction;
@@ -28,46 +21,10 @@ public class PickupTruck extends Vehicle implements HasTractionType {
     }
 
     @Override
-    public double getFuelConsumption() {
-        return fuelConsumption;
-    }
-
-    @Override
-    public double getMaintenanceCost() {
-        return maintenanceCost;
-    }
-
-    public void setFuelConsumption(double fuelConsumption) throws IllegalArgumentException {
-        PickupTruck.fuelConsumption = fuelConsumption;
-    }
-
-    public void setMaintenanceCost(double maintenanceCost) throws IllegalArgumentException {
-        PickupTruck.maintenanceCost = maintenanceCost;
-    }
-
-    @Override
     public VehicleType getType() {
         return VehicleType.PICKUP;
     }
-
-    public static int getPickUpTruckCount() {
-        return pickUpTruckCount;
-    }
-
-    @Override
-    public void enterDetails(InputService inputService) {
-        boolean hasFourWheelTraction = inputService.getBoolean("Does the Pickup Truck have 4x4 traction?");
-        setFourWheelTraction(hasFourWheelTraction);
-
-        if (PickupTruck.getPickUpTruckCount() == 0) {
-            double fuelConsumption = inputService.getDouble("Enter fuel consumption for the PickUp (L/100Km):");
-            double maintenanceCost = inputService.getDouble("Enter maintenance cost for the PickUp:");
-            setFuelConsumption(fuelConsumption);
-            setMaintenanceCost(maintenanceCost);
-        }
-        pickUpTruckCount++;
-    }
-
+    
     @Override
     public String toString() {
         return "PickupTruck - \n" +

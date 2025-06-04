@@ -5,7 +5,10 @@ import business.VehicleFacade;
 import data.VehicleRepository;
 import exception.EntityNotFoundException;
 import model.*;
-import service.InputService;
+import service.ConsoleInputService;
+import service.Reader;
+import util.CostCalculator;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -13,17 +16,16 @@ import java.util.Scanner;
 
 /*
     * VehicleManagement class provides methods for managing vehicles and trips.
-    * @Author [Miguel Armas, Soledad Buri, Jaime Landazuri, Cael Soto]s
+    * @Author [Miguel Armas, Soledad Buri, Jaime Landazuri, Cael Soto]
  */
 public class VehicleManagement {
-
     public static void clearConsole() {
         for (int i = 0; i < 50; i++) {
             System.out.println();
         }
     }
 
-    public int mainMenu(InputService inputService) throws NumberFormatException {
+    public int mainMenu(Reader reader) throws NumberFormatException {
         while (true) {
             try{
                 System.out.println("=== Delivery Fleet Management ===");
@@ -33,7 +35,7 @@ public class VehicleManagement {
                 System.out.println("3. Update Maintenance date");
                 System.out.println("4. Vehicle List");
                 System.out.println("5. Exit");
-                int option = inputService.getInt("Select an option: ");
+                int option = reader.getInt("Select an option: ");
                 if (option < 1 || option > 5) {
                     System.out.println("Invalid option");
                     continue;
@@ -49,15 +51,15 @@ public class VehicleManagement {
 
     /**
      *
-     * @param inputService
+     * @param reader
      * @return A subclass of Vehicle based on user input.
      */
-    public Vehicle enterVehicleType(InputService inputService) {
+    public Vehicle enterVehicleType(Reader reader) {
         while (true) {
             System.out.println("=== Register Vehicle ===");
             Vehicle vehicle;
             System.out.println("1. Truck\n2. Motorcycle\n3. Pickup");
-            int vehicleType = inputService.getInt("Enter vehicle type: ");
+            int vehicleType = reader.getInt("Enter vehicle type: ");
             switch (vehicleType) {
                 case 1:
                     vehicle = new Truck();
@@ -79,60 +81,70 @@ public class VehicleManagement {
     /**
      *
      * This method collects vehicle data from the user and sets it in the Vehicle object.
-     * @param inputService
+     * @param reader
      * @param vehicle
      */
-    public void enterVehicleData(InputService inputService, Vehicle vehicle) {
+    public void enterVehicleData(Reader reader, Vehicle vehicle) {
         while (true) {
             try {
                 System.out.println("=== Enter Vehicle Data ===");
-                String plate = inputService.getString("Enter vehicle plate. Format [A-Z - 0-9]:");
+                String plate = reader.getString("Enter vehicle plate. Format [A-Z - 0-9]:");
                 vehicle.setPlate(plate);
             } catch (IllegalArgumentException e){
                 System.out.println("Invalid plate format. Please try again.");
                 continue;
             }
 
-            double carryingCapacity = inputService.getDouble("Enter carrying capacity (Kg):");
+            double fuelConsumption = reader.getDouble("Enter fuel consumption (L/100Km):");
+            vehicle.setFuelConsumption(fuelConsumption);
+
+            double maintenanceCost = reader.getDouble("Enter maintenance cost ($):");
+            vehicle.setMaintenanceCost(maintenanceCost);
+
+            double carryingCapacity = reader.getDouble("Enter carrying capacity (Kg):");
             vehicle.setCarryingCapacity(carryingCapacity);
 
             try {
-                LocalDate lastMaintenanceDate = LocalDate.parse(inputService.getString(
+                LocalDate lastMaintenanceDate = LocalDate.parse(reader.getString(
                         "Enter last maintenance date (YYYY-MM-DD):"));
                 vehicle.setLastMaintenance(lastMaintenanceDate);
-                System.out.println("Vehicle registered successfully: " + vehicle.getPlate());
                 break;
             } catch (DateTimeParseException e) {
                 System.out.println("Invalid date format. Please use YYYY-MM-DD.");
             }
+            addExtraParameters(vehicle, reader);
+            System.out.println("Vehicle registered successfully: " + vehicle.getPlate());
         }
 
     }
 
-    public void enterVehicleDetails(Truck truck, InputService inputService) {
-        truck.enterDetails(inputService);
+    public void enterVehicleDetails(Truck truck, Reader reader) {
+        int axleCount = reader.getInt("Enter axle count for the Truck:");
+        truck.setAxleCount(axleCount);
     }
 
-    public void enterVehicleDetails(Motorcycle motorcycle, InputService inputService) {
-        motorcycle.enterDetails(inputService);
+    public void enterVehicleDetails(Motorcycle motorcycle, Reader reader) {
+        double engineDisplacement = reader.getDouble("Enter engine displacement for the Motorcycle (cm^3):");
+        motorcycle.setEngineDisplacement(engineDisplacement);
     }
 
-    public void enterVehicleDetails(PickupTruck pickup, InputService inputService) {
-        pickup.enterDetails(inputService);
+    public void enterVehicleDetails(PickupTruck pickup, Reader reader) {
+        boolean fourWheelTraction = reader.getBoolean("Does the Pickup Truck have 4x4 traction? (y/n)");
+        pickup.setFourWheelTraction(fourWheelTraction);
     }
 
     /**
      *
      * This method collects trip data from the user and sets it in the Trip object.
      * @param trip
-     * @param inputService
+     * @param reader
      * @param facade
      */
-    public void enterTripData(Trip trip,  InputService inputService, VehicleFacade facade) {
+    public void enterTripData(Trip trip, Reader reader, VehicleFacade facade) {
         while(true){
             try {
                 System.out.println("=== Register Trip ===");
-                String plate = inputService.getString("Enter vehicle plate. Format [A-Z - 0-9]:");
+                String plate = reader.getString("Enter vehicle plate. Format [A-Z - 0-9]:");
                 try{
                     facade.find(plate);
                 } catch (EntityNotFoundException e){
@@ -146,13 +158,13 @@ public class VehicleManagement {
             }
 
             try {
-                trip.setTripDate(LocalDate.parse(inputService.getString("Enter trip date (YYYY-MM-DD):")));
+                trip.setTripDate(LocalDate.parse(reader.getString("Enter trip date (YYYY-MM-DD):")));
             } catch (DateTimeParseException e) {
                 System.out.println("Invalid date format. Please use YYYY-MM-DD.");
                 continue;
             }
 
-            trip.setDistanceTravelled(inputService.getDouble("Enter distance traveled (Km):"));
+            trip.setDistanceTravelled(reader.getDouble("Enter distance traveled (Km):"));
             break;
         }
         System.out.println("Trip registered for vehicle with plate: " + trip.getVehiclePlate() +
@@ -162,7 +174,7 @@ public class VehicleManagement {
     public void showTripCost(Trip trip, VehicleFacade vehicleFacade) {
         try{
             Vehicle vehicle = vehicleFacade.find(trip.getVehiclePlate());
-            double cost = util.CostCalculator.calculateTripCost(vehicle, trip);
+            double cost = CostCalculator.calculateTripCost(vehicle, trip);
             System.out.println("=== Trip Cost ===");
             System.out.println("Trip cost for vehicle with plate " + trip.getVehiclePlate() + ": $" + cost);
             System.out.println("Fuel cost: $" + vehicle.getFuelConsumption());
@@ -198,34 +210,32 @@ public class VehicleManagement {
      * This method handles the main menu options for vehicle management.
      * @param facade
      */
-    public static void handleMenuOption(VehicleFacade facade){
+    public static void handleMenuOption(VehicleFacade facade, Reader reader) {
 
         try {
             VehicleManagement management = new VehicleManagement();
-            Scanner scanner = new Scanner(System.in);
-            InputService inputService = new InputService(scanner);
             while(true){
-                int option = management.mainMenu(inputService);
+                int option = management.mainMenu(reader);
                 switch (option) {
                     case 1:
-                        Vehicle vehicle = management.enterVehicleType(inputService);
-                        management.enterVehicleData(inputService, vehicle);
-                        management.addExtraParameters(vehicle, inputService);
+                        Vehicle vehicle = management.enterVehicleType(reader);
+                        management.enterVehicleData(reader, vehicle);
+                        management.addExtraParameters(vehicle, reader);
                         facade.create(vehicle);
                         System.out.println("Vehicle registered successfully: " + vehicle.getPlate());
 
                         break;
                     case 2:
                         Trip trip = new Trip();
-                        management.enterTripData(trip, inputService, facade);
+                        management.enterTripData(trip, reader, facade);
                         management.showTripCost(trip, facade);
                         break;
                     case 3:
                         System.out.println("Enter vehicle plate to update maintenance date:");
-                        String plate = inputService.getString("Enter vehicle plate: ");
+                        String plate = reader.getString("Enter vehicle plate: ");
                         try{
                             facade.find(plate);
-                            LocalDate newMaintenanceDate = LocalDate.parse(inputService.getString("Enter new maintenance date (YYYY-MM-DD):"));
+                            LocalDate newMaintenanceDate = LocalDate.parse(reader.getString("Enter new maintenance date (YYYY-MM-DD):"));
                             facade.update(plate, newMaintenanceDate);
                             System.out.println("Maintenance date updated successfully for vehicle with plate: " + plate);
 
@@ -254,24 +264,26 @@ public class VehicleManagement {
      *
      * This method adds extra parameters to the vehicle based on its type.
      * @param vehicle
-     * @param inputService
+     * @param reader
      */
-    public void addExtraParameters(Vehicle vehicle, InputService inputService) {
+    public void addExtraParameters(Vehicle vehicle, Reader reader) {
         switch (vehicle.getType()){
             case TRUCK:
-                enterVehicleDetails((Truck) vehicle, inputService);
+                enterVehicleDetails((Truck) vehicle, reader);
                 break;
             case MOTORCYCLE:
-                enterVehicleDetails((Motorcycle) vehicle, inputService);
+                enterVehicleDetails((Motorcycle) vehicle, reader);
                 break;
             case PICKUP:
-                enterVehicleDetails((PickupTruck) vehicle, inputService);
+                enterVehicleDetails((PickupTruck) vehicle, reader);
                 break;
         }
     }
 
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Reader reader = new Reader(new ConsoleInputService(scanner));
         VehicleFacade facade = new VehicleFacade();
-        handleMenuOption(facade);
+        handleMenuOption(facade, reader);
     }
 }

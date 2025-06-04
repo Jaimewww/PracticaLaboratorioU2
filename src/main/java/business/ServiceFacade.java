@@ -1,7 +1,7 @@
 package business;
 
 import model.Vehicle;
-import service.ConsoleService;
+import service.ConsoleMessageService;
 import service.Notification;
 import util.Constants;
 
@@ -15,7 +15,7 @@ import java.time.temporal.ChronoUnit;
 
 public class ServiceFacade {
 
-    private final Notification notificationService = new Notification(new ConsoleService());
+    private final Notification notificationService = new Notification(new ConsoleMessageService());
 
     /**
      *

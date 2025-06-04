@@ -46,7 +46,7 @@ public class VehicleRepository {
      * @return
      * @throws EntityNotFoundException
      */
-    public long findId(String plate) throws EntityNotFoundException {
+    private long findId(String plate) throws EntityNotFoundException {
         for (Map.Entry<Long, Vehicle> entry : tableVehicleDB.entrySet()) {
             if (entry.getValue().getPlate().equals(plate)) {
                 return entry.getKey();
@@ -63,8 +63,7 @@ public class VehicleRepository {
         return vehicle;
     }
 
-    public Vehicle find(String plate) throws EntityNotFoundException {
-
+    public Vehicle find (String plate) throws EntityNotFoundException {
         for (Vehicle vehicle : tableVehicleDB.values()) {
             if (vehicle.getPlate().equals(plate)) {
                 return vehicle;
